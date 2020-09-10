@@ -106,4 +106,55 @@ The page appears blank but looking at the source code will reveal the password f
 
 ### natas7
 
-TBD
+A page with 2 options.
+
+Home and About
+
+Clicking one adds `?page=home` and `?page=about` to the url. I smell Local File Inclusion.
+
+```
+http://natas7.natas.labs.overthewire.org/index.php?page=../../../../../etc/natas_webpass/natas8
+```
+
+The `../` allows us to move up a directory. Lets just do it a lot to make sure we get to the top. The natas challenge web page stats we can always find the password file under `/etc/natas_webpass/` and the next level name.
+
+![image-20200910193416105](natas7.png)
+
+```
+DBfUBfqQG69KvJvJ1iAbMoIpwSNQ9bWe 
+```
+
+### natas8
+
+Another Secret Page. Oh Dear. Lets take a look at the source code.
+
+```php
+<?
+
+$encodedSecret = "3d3d516343746d4d6d6c315669563362";
+
+function encodeSecret($secret) {
+    return bin2hex(strrev(base64_encode($secret)));
+}
+
+if(array_key_exists("submit", $_POST)) {
+    if(encodeSecret($_POST['secret']) == $encodedSecret) {
+    print "Access granted. The password for natas9 is <censored>";
+    } else {
+    print "Wrong secret";
+    }
+}
+?>
+```
+
+Alright so we have a secret and we have how it got there. Lets reverse engineer. For the sake of easiness (and the fact that I am using a windows OS), lets use cyberchef to get the secret.
+
+The order to get is base64 > Reverse String > bin2hex so we have to do it backwards. From Hex > Reverse the order > Decode base64.
+
+![image-20200910194548812](natas8.png)
+
+the final code is `oubWYf2kBq` which reveals the password.
+
+```
+W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
+```
