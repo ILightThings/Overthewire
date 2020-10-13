@@ -200,7 +200,7 @@ For security reasons, we now filter on certain characters
 
 Hoa boi.... ( Had to look this one up)
 
-You inject another file for the grep command to lookup. Lets do `/etc/natas_webpass/natas11` cause thats the goal I guess.
+You inject another file for the grep command to lookup. Lets do `a /etc/natas_webpass/natas11` cause thats the goal I guess.
 
 ![image-20200910202050243](natas11.png)
 
